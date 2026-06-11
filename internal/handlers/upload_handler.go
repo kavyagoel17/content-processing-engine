@@ -1,14 +1,21 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-
 	"github.com/kavya/content-engine/internal/logger"
+	"github.com/kavya/content-engine/internal/services"
 )
+
+type FileMetadata struct {
+	Filename    string `json:"filename"`
+	Size        int64  `json:"size"`
+	ContentType string `json:"content_type"`
+}
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 	logger.InfoLog.Printf("Uploading File")
@@ -23,28 +30,42 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	logger.InfoLog.Printf("File Size: %d", handler.Size)
 	logger.InfoLog.Printf("MIME Header: %v", handler.Header)
 
-	dst, err := CreateFile(handler.Filename)
+	metadata := FileMetadata{
+		Filename:    handler.Filename,
+		Size:        handler.Size,
+		ContentType: handler.Header.Get("Content-Type"),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(metadata)
+	
+	dst, filePath, err := CreateFile(handler.Filename)
 	if err != nil {
 		http.Error(w, "Error saving the file", http.StatusInternalServerError)
 		return
 	}
+
+	logger.InfoLog.Printf("Reading file: %s", filePath)
 	defer dst.Close()
 
 	if _, err := dst.ReadFrom(file); err != nil {
 		http.Error(w, "Error saving the file", http.StatusInternalServerError)
 	}
+
+	services.Extractor(filePath)
 }
 
-func CreateFile(filename string) (*os.File, error) {
+func CreateFile(filename string) (*os.File, string, error) {
 	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
 		os.Mkdir("uploads", 0755)
 	}
 
-	dst, err := os.Create(filepath.Join("uploads", filename))
+	path := filepath.Join("uploads", filename)
+	dst, err := os.Create(path)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	return dst, nil
+	return dst, path, nil
 
 }
 
