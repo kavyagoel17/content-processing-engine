@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"strings"
-
+	"github.com/kavya/content-engine/internal/logger"
 	"github.com/spf13/viper"
 )
 
@@ -37,7 +37,7 @@ func LoadConfig() (*Config, error){
 		!ok{
 			return nil, fmt.Errorf("error reading config file: %w", err)
 		}
-		WarningLog.Println("Config file not found, relying on environment variables/defaults")
+		logger.WarningLog.Println("Config file not found, relying on environment variables/defaults")
 	}
 	var config Config
 

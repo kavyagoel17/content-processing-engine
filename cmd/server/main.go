@@ -1,12 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"path/filepath"
-
 	"github.com/kavya/content-engine/internal/config"
 	"github.com/kavya/content-engine/internal/logger"
 	"github.com/kavya/content-engine/internal/handlers"
