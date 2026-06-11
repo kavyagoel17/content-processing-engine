@@ -26,3 +26,18 @@ INFO:2026/06/11 15:04:43 main.go:77: Loaded Server port: 8080
 INFO:2026/06/11 15:04:43 main.go:78: Loaded Server environment: development
 INFO:2026/06/11 15:08:32 main.go:79: Loaded Server port: 8080
 INFO:2026/06/11 15:08:32 main.go:80: Loaded Server environment: development
+INFO:2026/06/11 17:44:38 main.go:142: Loaded Server port: 8080
+INFO:2026/06/11 17:44:38 main.go:143: Loaded Server environment: development
+INFO:2026/06/11 17:45:55 main.go:142: Loaded Server port: 8080
+INFO:2026/06/11 17:45:55 main.go:143: Loaded Server environment: development
+INFO:2026/06/11 17:47:24 main.go:131: Loaded Server port: 8080
+INFO:2026/06/11 17:47:24 main.go:132: Loaded Server environment: development
+INFO:2026/06/11 17:51:06 main.go:39: Uploaded File: sample.pdf
+INFO:2026/06/11 17:51:06 main.go:40: File Size: 710481
+INFO:2026/06/11 17:51:06 main.go:41: MIME Header: map[Content-Disposition:[form-data; name="myFile"; filename="sample.pdf"] Content-Type:[application/pdf]]
+INFO:2026/06/11 18:00:54 main.go:137: Loaded Server port: 1234
+INFO:2026/06/11 18:00:54 main.go:138: Loaded Server environment: development
+INFO:2026/06/11 18:00:54 main.go:80: Server starting on :1234
+INFO:2026/06/11 18:01:05 main.go:39: Uploaded File: sample.pdf
+INFO:2026/06/11 18:01:05 main.go:40: File Size: 710481
+INFO:2026/06/11 18:01:05 main.go:41: MIME Header: map[Content-Disposition:[form-data; name="myFile"; filename="sample.pdf"] Content-Type:[application/pdf]]

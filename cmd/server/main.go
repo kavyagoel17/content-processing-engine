@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strings"
 	"io"
-	"github.com/spf13/viper"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/spf13/viper"
 )
 
 type Config struct{
@@ -34,22 +36,50 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
     }
 	defer file.Close()
 
-	InfoLog.Println(w, "Uploaded File: %s\n", handler.Filename)
-    InfoLog.Println(w, "File Size: %d\n", handler.Size)
-    InfoLog.Println(w, "MIME Header: %v\n", handler.Header)
-
-	dst, err := os.Create(handler.Filename)
+	InfoLog.Printf("Uploaded File: %s", handler.Filename)
+	InfoLog.Printf("File Size: %d", handler.Size)
+	InfoLog.Printf("MIME Header: %v", handler.Header)
+	
+	dst, err := createFile(handler.Filename)
     if err != nil {
         http.Error(w, "Error saving the file", http.StatusInternalServerError)
         return
     }
 	defer dst.Close()
+	
+
+	if _, err := dst.ReadFrom(file); err != nil {
+        http.Error(w, "Error saving the file", http.StatusInternalServerError)
+    }
+}
+
+func createFile(filename string) (*os.File, error){
+	if _, err:= os.Stat("uploads"); os.IsNotExist(err){
+		os.Mkdir("uploads",0755)
+	}
+
+	dst, err := os.Create(filepath.Join("uploads", filename))
+    if err != nil {
+        return nil, err
+    }
+	return dst, nil
 
 }
 
-func setupRoutes() {
+func isValidFileType(file []byte) bool {
+    fileType := http.DetectContentType(file)
+
+    return fileType == "application/pdf"
+}
+
+func setupRoutes(port int) {
     http.HandleFunc("/upload", uploadFile)
-    http.ListenAndServe(":8080", nil)
+
+    addr := fmt.Sprintf(":%d", port)
+
+    InfoLog.Printf("Server starting on %s", addr)
+
+    log.Fatal(http.ListenAndServe(addr, nil))
 }
 
 
@@ -106,4 +136,6 @@ func main(){
 	}
 	InfoLog.Println("Loaded Server port:", cfg.Server.Port)
 	InfoLog.Println("Loaded Server environment:", cfg.Server.Environment)
+
+	setupRoutes(cfg.Server.Port)
 }
