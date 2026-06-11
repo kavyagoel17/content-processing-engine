@@ -1,0 +1,5 @@
+server:
+  port: 8080
+  environment: "development"
+database:
+  url: "postgres://user:password@localhost:5432/dbname"
